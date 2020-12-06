@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="users")
@@ -19,6 +20,18 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      */
     private ?int $id;
+
+    /**
+     * @ORM\Column(name="first_name", type="string", unique=true)
+     * @Serializer\Groups({"base"})
+     */
+    private string $firstName;
+
+    /**
+     * @ORM\Column(name="last_name", type="string", unique=true)
+     * @Serializer\Groups({"base"})
+     */
+    private string $lastName;
 
     /**
      * @ORM\Column(type="string", unique=true)
@@ -35,53 +48,48 @@ class User implements UserInterface
      */
     private array $roles;
 
-    public function __construct(string $username, string $password, array $roles)
+    public function __construct(string $username, string $firstName, string $lastName, string $password, array $roles)
     {
         $this->username = $username;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->password = $password;
         $this->roles = $roles;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @return string
-     */
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     */
     public function setPassword(string $password): void
     {
         $this->password = $password;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
-        $roles = $this->roles;
-        if (empty($roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
 
